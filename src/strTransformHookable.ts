@@ -1,37 +1,29 @@
 
-import { TSHookTO, TSReplacerAllAsync, TSReplacer, TSSource } from "./definitions";
+import { ISTRHookableTransform, TSReplaceFilter, TSHookTO, TSReplacerAllAsync, TSHook, TSSource } from "./definitions";
 import { strFetusTransformer as strFetusTransform } from "./strFetusTransform";
 
 
 /*
  *
  */
-String.prototype.tranform = function (
-  regex: RegExp,
-  src: TSSource,
-  defkey: string,
-  ukn: TSReplacerAllAsync,
-  filterValue: TSReplacer
-): Promise<string> {
-  return (new strTransformHookable(this + "", src, defkey, ukn, filterValue)).run();
-}
 
-
-/*
- *
- */
-
-class strTransformHookable extends strFetusTransform {
-  private static _hooks: TSReplacer[];
+export abstract class strTransformHookable extends strFetusTransform implements ISTRHookableTransform {
+  private static _hooks: TSHook[];
+  private hook_index: number = 0;
 
   constructor(
     protected str: string,
+    regex: RegExp,
     protected src?: TSSource,
-    private readonly defkey?: string,
+    public readonly defkey?: string,
     private readonly ukn?: TSReplacerAllAsync,
-    filter?: TSReplacer
+    filter?: TSReplaceFilter
   ) {
-    super(str, /((\$\{)((?:[^\{\}\$\\]|\\.)*)\}|(\{\{\{)((?:[^\{\}\$\\]|\\.)*)\}\}\}|(\{\{)((?:[^\{\}\$\\]|\\.)*)\}\})/gi, filter);
+    super(str,regex, filter);
+  }
+
+  public getSrc(): TSSource {
+    return Object.assign({}, this.src);
   }
 
   public static hookLen(): number {
@@ -64,26 +56,57 @@ class strTransformHookable extends strFetusTransform {
     return true;
   }
 
-  protected static getHooks(): readonly TSReplacer[] {
+  protected static getHooks(): readonly TSHook[] {
     return this._hooks;
   }
 
-  protected processMatch(match: RegExpMatchArray): Promise<string> {
+  protected eachHooks(fullOrDef: string): Promise<string> {
+    const static_ = (this.constructor as typeof strTransformHookable);
+
     return new Promise<string>((R0, R_0) => {
-      /*
-      if (!this.hookLen()) {
-        return (match.length > 3)
-          ? R0(match[3])
+      if (this.hook_index < static_.hookLen()) {
+        return static_.getHooks()[this.hook_index++](fullOrDef, <ISTRHookableTransform>this)
+          .then((r) => this.eachHooks(r).then((r2) => R0(r2)));
+      }
+
+      return R0(fullOrDef);
+    });
+  }
+
+  protected processMatch(match: RegExpMatchArray): Promise<string> {
+    this.hook_index = 0;
+
+    return new Promise<string>((R0, R_0) => {
+      ((defRes: (k: number) => string) => {
+        if (!(this.constructor as typeof strTransformHookable).hookLen()) {
+          R0(defRes(3));
+        }
+
+        this.eachHooks(defRes(3));
+      })((k: number): string => {
+        const r: boolean | string = (match.length > k)
+          ? match[k]
           : (
             this.defkey
-              ? R0(this.defkey)
+              ? this.defkey
               : (
                 (match.length > 0)
-                  ? R0(match[0])
-                  : R_0("strTransformHookable::processMatch: match with unknow default value.")
+                  ? match[0]
+                  : false
               )
           );
-      }*/
+
+        if (r === false) {
+          return `strTransformHookable::processMatch: match with unknow default value and invalid match parameter.`;
+        }
+
+        return r;
+      });
     });
   }
 }
+
+
+
+
+

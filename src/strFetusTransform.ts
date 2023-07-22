@@ -1,4 +1,4 @@
-import { TSReplacerAllAsync, TSPromiseMatch, TSReplacer, TSSource } from "./definitions";
+import { TSReplacerAllAsync, TSPromiseMatch, TSReplaceFilter } from "./definitions";
 import { strCommons } from "./strCommons";
 
 /*
@@ -32,7 +32,7 @@ export abstract class strFetusTransformer extends strCommons {
   constructor(
     protected str: string,
     public readonly regex: RegExp,
-    protected readonly filter?: TSReplacer
+    protected readonly filter?: TSReplaceFilter
   ) {
     super();
   }

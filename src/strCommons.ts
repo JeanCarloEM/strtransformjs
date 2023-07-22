@@ -30,7 +30,7 @@ export abstract class strCommons {
 
     // get matches
     let matcher = new RegExp(regex.source, flags)
-    const matches = Array.from(input.matchAll(matcher))
+    const matches = [...input.matchAll(matcher)];
 
     if (matches.length == 0) return input
 

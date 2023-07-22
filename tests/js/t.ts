@@ -1,10 +1,10 @@
 class myClass {
   private static propA: any[] = ["a", "b"];
 
-  public static myMehod(): Promise<any[]> {
+  public myMehod(): Promise<any[]> {
     return new Promise<any[]>((res) => {
       /* call the eventually overridden static method */
-      let x: any[] = this.getter();
+      let x: any[] = (this.constructor as typeof myClass).getter(); // << here need
       /* ... */
       res(x);
     });
@@ -25,5 +25,5 @@ export class childClass extends myClass {
   }
 }
 
-childClass.myMehod().then((r) => console.log(r));
+(new childClass()).myMehod().then((r) => console.log(r));
 // show: ["a", "b", 1, 2, 3];

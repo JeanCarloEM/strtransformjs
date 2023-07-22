@@ -1,0 +1,36 @@
+
+import { TSReplaceFilter, TSReplacerAllAsync, TSHook, TSSource } from "./definitions";
+import { strTransformHookable } from "./strTransformHookable";
+
+/*
+ *
+ */
+String.prototype.tranform = function (
+  src: TSSource,
+  defkey: string,
+  ukn: TSReplacerAllAsync,
+  filterValue: TSReplaceFilter
+): Promise<string> {
+  return (new strTransformeCore(this + "", src, defkey, ukn, filterValue)).run();
+}
+
+/*
+ *
+ */
+
+export class strTransformeCore extends strTransformHookable {
+  constructor(
+    str: string,
+    src?: TSSource,
+    defkey?: string,
+    ukn?: TSReplacerAllAsync,
+    filter?: TSReplaceFilter
+  ) {
+    super(str, /((\$\{)((?:[^\{\}\$\\]|\\.)*)\}|(\{\{\{)((?:[^\{\}\$\\]|\\.)*)\}\}\}|(\{\{)((?:[^\{\}\$\\]|\\.)*)\}\})/gi, src, defkey, ukn, filter);
+  }
+}
+
+
+
+
+

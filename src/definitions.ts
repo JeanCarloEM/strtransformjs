@@ -1,11 +1,18 @@
 export type TSSource = Object;
 
-export type TstringTransform = (
+export type TstringTransformation = (
   regex: RegExp,
   src: TSSource,
   defkey: string,
   ukn: TSReplacerAllAsync,
-  filterValue: TSReplacer
+  filterValue: TSReplaceFilter
+) => Promise<string>;
+
+export type TstringTransform = (
+  src: TSSource,
+  defkey: string,
+  ukn: TSReplacerAllAsync,
+  filterValue: TSReplaceFilter
 ) => Promise<string>;
 
 /*
@@ -29,14 +36,19 @@ export type TSReplaceAsync = (
 
 export type TSHookTO = {
   hook: RegExp,
-  caller:TSReplacer
+  caller: TSHook
+}
+
+
+export interface ISTRHookableTransform {
 }
 
 /*
  * NEW
  */
 export type TSReplacerAllAsync = (match: RegExpMatchArray) => Promise<string>;
-export type TSReplacer = (value: string, match: RegExpMatchArray) => Promise<string>;
+export type TSReplaceFilter = (value: string, match: RegExpMatchArray) => Promise<string>;
+export type TSHook = (fullOrDef: string, transformer: ISTRHookableTransform) => Promise<string>;
 
 export type TSReplaceAllAsync = (
   searchValue: RegExp,

@@ -1,7 +1,7 @@
 class myClass {
-    static myMehod() {
+    myMehod() {
         return new Promise((res) => {
-            let x = this.getter();
+            let x = this.constructor.getter();
             res(x);
         });
     }
@@ -16,5 +16,5 @@ export class childClass extends myClass {
     }
 }
 childClass.probB = [1, 2, 3];
-childClass.myMehod().then((r) => console.log(r));
+(new childClass()).myMehod().then((r) => console.log(r));
 //# sourceMappingURL=t.js.map

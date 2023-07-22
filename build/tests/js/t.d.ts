@@ -1,6 +1,6 @@
 declare class myClass {
     private static propA;
-    static myMehod(): Promise<any[]>;
+    myMehod(): Promise<any[]>;
     static getter(): any[];
 }
 export declare class childClass extends myClass {

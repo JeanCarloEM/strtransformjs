@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "dist/",
+    "outDir": "build/",
     "target": "es6",
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
@@ -25,11 +25,12 @@
     ]
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "tests/js/**/*"
   ],
   "exclude": [
-    "node_modules/**/*"
-
+    "node_modules/**/*",
+    "./dist"
   ],
-  "hooks": [ "copy-files" ]
+  "hooks": []
 }

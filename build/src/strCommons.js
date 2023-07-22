@@ -8,11 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var _a;
-import { PromiseExecutionMode } from "./definitions";
-export class stringBasics {
+import { PromiseExecutionMode } from "./definitions.js";
+export class strCommons {
 }
-_a = stringBasics;
-stringBasics.replaceAsync = (input, regex, replacer) => __awaiter(void 0, void 0, void 0, function* () {
+_a = strCommons;
+strCommons.replaceAsync = (input, regex, replacer) => __awaiter(void 0, void 0, void 0, function* () {
     const promises = [];
     input.replace(regex, function (match, ...args) {
         promises.push((typeof replacer === 'function') ? replacer(match, ...args) : replacer);
@@ -20,7 +20,7 @@ stringBasics.replaceAsync = (input, regex, replacer) => __awaiter(void 0, void 0
     const data = yield Promise.all(promises);
     return input.replace(regex, r => data.shift());
 });
-stringBasics.replaceAllAsync = (input, regex, replacement, mode = PromiseExecutionMode.All) => __awaiter(void 0, void 0, void 0, function* () {
+strCommons.replaceAllAsync = (input, regex, replacement, mode = PromiseExecutionMode.All) => __awaiter(void 0, void 0, void 0, function* () {
     const addGlobal = !regex.flags.includes("g");
     let flags = regex.flags;
     if (addGlobal)
@@ -49,4 +49,4 @@ stringBasics.replaceAllAsync = (input, regex, replacement, mode = PromiseExecuti
     }
     return result;
 });
-//# sourceMappingURL=stringBasics.js.map
+//# sourceMappingURL=strCommons.js.map

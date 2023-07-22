@@ -7,18 +7,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { stringBasics } from "./stringBasics";
+import { strCommons } from "./strCommons";
 String.prototype.replaceAllAsync = function (searchValue, replacer) {
     return __awaiter(this, void 0, void 0, function* () {
-        return textBasicParser.replaceAllAsync("" + this, searchValue, replacer);
+        return strFetusTransformer.replaceAllAsync("" + this, searchValue, replacer);
     });
 };
 String.prototype.replaceAsync = function (searchValue, replacer) {
     return __awaiter(this, void 0, void 0, function* () {
-        return textBasicParser.replaceAsync("" + this, searchValue, replacer);
+        return strFetusTransformer.replaceAsync("" + this, searchValue, replacer);
     });
 };
-export class textBasicParser extends stringBasics {
+export class strFetusTransformer extends strCommons {
     constructor(str, regex, filter) {
         super();
         this.str = str;
@@ -66,4 +66,4 @@ export class textBasicParser extends stringBasics {
         });
     }
 }
-//# sourceMappingURL=textBasicParser.js.map
+//# sourceMappingURL=strFetusTransform.js.map

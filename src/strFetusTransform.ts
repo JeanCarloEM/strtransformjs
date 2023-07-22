@@ -1,14 +1,14 @@
-import { TSReplacer, TSPromiseMatch, TSReplacerFilter, TSSource } from "./definitions";
-import { stringBasics } from "./stringBasics";
+import { TSReplacerAllAsync, TSPromiseMatch, TSReplacer, TSSource } from "./definitions";
+import { strCommons } from "./strCommons";
 
 /*
  *
  */
 String.prototype.replaceAllAsync = async function (
   searchValue: RegExp,
-  replacer: TSReplacer
+  replacer: TSReplacerAllAsync
 ): Promise<string> {
-  return textBasicParser.replaceAllAsync("" + this, searchValue, replacer);
+  return strFetusTransformer.replaceAllAsync("" + this, searchValue, replacer);
 }
 
 
@@ -19,20 +19,20 @@ String.prototype.replaceAsync = async function (
   searchValue: string | RegExp,
   replacer: string | TSPromiseMatch
 ): Promise<string> {
-  return textBasicParser.replaceAsync("" + this, searchValue, replacer);
+  return strFetusTransformer.replaceAsync("" + this, searchValue, replacer);
 }
 
 /*
  *
  */
-export abstract class textBasicParser extends stringBasics {
+export abstract class strFetusTransformer extends strCommons {
   private limiteRunLoop_counter: number = 0;
   public readonly limiteRunLoop: number = 1000;
 
   constructor(
     protected str: string,
     public readonly regex: RegExp,
-    protected readonly filter?: TSReplacerFilter
+    protected readonly filter?: TSReplacer
   ) {
     super();
   }

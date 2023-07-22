@@ -4,8 +4,8 @@ export type TstringTransform = (
   regex: RegExp,
   src: TSSource,
   defkey: string,
-  ukn: TSReplacer,
-  filterValue: TSReplacerFilter
+  ukn: TSReplacerAllAsync,
+  filterValue: TSReplacer
 ) => Promise<string>;
 
 /*
@@ -27,15 +27,20 @@ export type TSReplaceAsync = (
   replacer: string | TSPromiseMatch
 ) => Promise<string>;
 
+export type TSHookTO = {
+  hook: RegExp,
+  caller:TSReplacer
+}
+
 /*
  * NEW
  */
-export type TSReplacer = (match: RegExpMatchArray) => Promise<string>;
-export type TSReplacerFilter = (value: string, match: RegExpMatchArray) => Promise<string>;
+export type TSReplacerAllAsync = (match: RegExpMatchArray) => Promise<string>;
+export type TSReplacer = (value: string, match: RegExpMatchArray) => Promise<string>;
 
 export type TSReplaceAllAsync = (
   searchValue: RegExp,
-  replacer: TSReplacer
+  replacer: TSReplacerAllAsync
 ) => Promise<string>;
 
 declare global {

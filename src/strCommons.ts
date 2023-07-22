@@ -1,7 +1,7 @@
-import { PromiseExecutionMode, TSPromiseMatch } from "./definitions";
+import { PromiseExecutionMode, TSPromiseMatch } from "./definitions.js";
 
 
-export abstract class stringBasics {
+export abstract class strCommons {
   public static replaceAsync = async (
     input: string, regex: string | RegExp,
     replacer: string | TSPromiseMatch

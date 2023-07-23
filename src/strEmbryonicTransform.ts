@@ -171,11 +171,25 @@ export abstract class strEmbryonicTransform extends strCommons {
           }
           return r;
         })
-
-        /* recursive call replace */
         .then((r) => {
-          R1(r)
+          return r
+            .replace(/\\\$/g, '$')
+            .replace(/\\\|/g, '|')
+            .replace(/\\\?/g, '?')
+            .replace(/\\\{/g, '{')
+            .replace(/\\\}/g, '}')
+            .replace(/\\\(/g, '(')
+            .replace(/\\\)/g, ')')
+            .replace(/\\\[/g, '[')
+            .replace(/\\\]/g, ']')
+            .replace(/\\\</g, '<')
+            .replace(/\\\>/g, '>');
         })
+        .then((r) => {
+          console.log(r);
+          return r;
+        })
+        .then((r) => R1(r))
         .catch(r => R_1(r));
     });
   }

@@ -5,7 +5,9 @@ export class mainHook implements ISHookTO {
 
   public run = (match: RegExpMatchArray, from: string): Promise<string> => {
     return new Promise<string>((R0, R_0) => {
-      R0('__a__');
+      const s = '__a\\{b\\}\{c\}\\\\{d\\\\}__';
+      console.warn(s);
+      R0(s);
     });
   }
 }

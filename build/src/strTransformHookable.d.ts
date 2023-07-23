@@ -1,17 +1,14 @@
-import { ISTRHookableTransform, TSReplaceFilter, TSHookTO, TSReplacerAllAsync, TSHook, TSSource } from "./definitions";
-import { strFetusTransformer as strFetusTransform } from "./strFetusTransform";
-export declare abstract class strTransformHookable extends strFetusTransform implements ISTRHookableTransform {
-    protected str: string;
-    protected src?: Object | undefined;
-    readonly defkey?: string | undefined;
-    private readonly ukn?;
-    private static _hooks;
+import { TSReplaceFilter, ISHookTO, TSReplacerAllAsync, ISTRHookableTransform } from "./definitions";
+import { strEmbryonicTransform as strFetusTransform } from "./strEmbryonicTransform";
+export declare class strTransformHookable extends strFetusTransform implements ISTRHookableTransform {
+    private _hooks;
     private hook_index;
-    constructor(str: string, regex: RegExp, src?: Object | undefined, defkey?: string | undefined, ukn?: TSReplacerAllAsync | undefined, filter?: TSReplaceFilter);
-    getSrc(): TSSource;
-    static hookLen(): number;
-    static addHook(hook: TSHookTO): boolean;
-    protected static getHooks(): readonly TSHook[];
-    protected eachHooks(fullOrDef: string): Promise<string>;
-    protected processMatch(match: RegExpMatchArray): Promise<string>;
+    constructor(_hooks: ISHookTO[], defReplace?: string, ukn?: null | TSReplacerAllAsync, filter?: null | TSReplaceFilter);
+    hookLen: () => number;
+    addHook: (hook: ISHookTO) => boolean;
+    run: (str: string) => Promise<string>;
+    getHooks: (key?: number | boolean) => ISHookTO | readonly ISHookTO[];
+    protected eachHooks(str: string): Promise<string>;
+    private getRegex;
+    protected processMatch: (match: RegExpMatchArray, from: string) => Promise<string>;
 }

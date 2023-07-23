@@ -2,7 +2,7 @@
   "name": "strtransformjs",
   "version": "1.0.0",
   "description": "Client-side string/texto render, wikitext abd react compatibility, expandable with látex, markdown and more.",
-  "main": "index.js",
+  "main": "build/src/stratransform.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "typecheck": "tsc --p .",
@@ -10,15 +10,15 @@
     "compile1": "cross-env-shell babel $INIT_CWD -d $INIT_CWD --extensions '.ts' --no-comments --source-maps",
     "typecheck-compile": "npm run typecheck && npm run compile",
     "treatjs": "concurrently \"npm run minify\" \"npm run prettier_dist\"",
-    "treatjs2": "",
-    "minify": "uglifyjs \"dist/*\" -o scripts.min.js",
     "prettier_dist": "prettier --write \"dist\"",
-    "watch": "tsc-watch --onSuccess \"npm run treatjs2\"",
+    "watch": "tsc-watch --onSuccess \"npm run minify\"",
     "server": "lite-server --baseDir=",
     "copy": "cpx -w -f \"src/**\" \"build/src/\" -p --ignore \"*.ts\"",
     "copy_tests": "cpx -w -f \"tests/**\" \"build/tests/\" -p --ignore \"*.ts\"",
-    "clean_folder": "rimraf \"dist/\" -I",
-    "start": "concurrently \"npm run clean_folder\" \"npm run copy_tests\" \"npm run copy\" \"npm run watch\" \"npm run server\""
+    "clean_folder": "rimraf \"build/\" -I",
+    "start": "concurrently \"npm run clean_folder\" \"npm run copy_tests\" \"npm run copy\" \"npm run watch\" \"npm run server\"",
+    "minify": ""
+
   },
   "repository": {
     "type": "git",
@@ -39,13 +39,15 @@
     "concurrently": "8.2.0",
     "cpx2": "^5.0.0",
     "cross-env": "^7.0.3",
-    "glob": "^10.3.3",
     "lite-server": "^2.6.1",
-    "minify": "^10.3.0",
     "prettier": "^3.0.0",
     "rimraf": "^5.0.1",
     "tsc-hooks": "^1.1.2",
     "tsc-watch": "^6.0.4",
     "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "rollup": "^3.26.3",
+    "terser": "^5.19.2"
   }
 }

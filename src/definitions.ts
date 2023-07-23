@@ -34,21 +34,26 @@ export type TSReplaceAsync = (
   replacer: string | TSPromiseMatch
 ) => Promise<string>;
 
-export type TSHookTO = {
+export interface ISHookTO {
   hook: RegExp,
-  caller: TSHook
+  run: TSReplacerAllAsync
 }
+
+export type TSDinamicRegexGetter = () => RegExp | null;
 
 
 export interface ISTRHookableTransform {
+  addHook: (hook: ISHookTO) => boolean;
+  hookLen: () => number;
+  run: (str: string) => Promise<string>;
+  getHooks: (key: number | boolean) => ISHookTO | readonly ISHookTO[];
 }
 
 /*
  * NEW
  */
-export type TSReplacerAllAsync = (match: RegExpMatchArray) => Promise<string>;
+export type TSReplacerAllAsync = (match: RegExpMatchArray, from: string) => Promise<string>;
 export type TSReplaceFilter = (value: string, match: RegExpMatchArray) => Promise<string>;
-export type TSHook = (fullOrDef: string, transformer: ISTRHookableTransform) => Promise<string>;
 
 export type TSReplaceAllAsync = (
   searchValue: RegExp,

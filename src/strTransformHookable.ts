@@ -1,36 +1,39 @@
 
-import { ISTRHookableTransform, TSReplaceFilter, TSHookTO, TSReplacerAllAsync, TSHook, TSSource } from "./definitions";
-import { strFetusTransformer as strFetusTransform } from "./strFetusTransform";
+import { TSReplaceFilter, ISHookTO, TSReplacerAllAsync, ISTRHookableTransform } from "./definitions";
+import { strEmbryonicTransform as strFetusTransform } from "./strEmbryonicTransform";
 
 
 /*
  *
  */
 
-export abstract class strTransformHookable extends strFetusTransform implements ISTRHookableTransform {
-  private static _hooks: TSHook[];
+export class strTransformHookable extends strFetusTransform implements ISTRHookableTransform {
   private hook_index: number = 0;
 
+  /*
+   *
+   */
   constructor(
-    protected str: string,
-    regex: RegExp,
-    protected src?: TSSource,
-    public readonly defkey?: string,
-    private readonly ukn?: TSReplacerAllAsync,
-    filter?: TSReplaceFilter
+    private _hooks: ISHookTO[],
+    defReplace: string = "",
+    ukn: null | TSReplacerAllAsync = null,
+    filter: null | TSReplaceFilter = null
   ) {
-    super(str,regex, filter);
+    super(null, defReplace, ukn, filter);
+    this.regex = this.getRegex;
   }
 
-  public getSrc(): TSSource {
-    return Object.assign({}, this.src);
+  /*
+   *
+   */
+  public hookLen = (): number => {
+    return (<ISHookTO[]>this.getHooks()).length;
   }
 
-  public static hookLen(): number {
-    return this._hooks.length;
-  }
-
-  public static addHook(hook: TSHookTO): boolean {
+  /*
+   *
+   */
+  public addHook = (hook: ISHookTO): boolean => {
     /*
      * runtime check type
      *
@@ -47,61 +50,95 @@ export abstract class strTransformHookable extends strFetusTransform implements 
       (!(hook.hook instanceof RegExp)) ||
 
       (!hook.hasOwnProperty('caller')) ||
-      (typeof hook.caller !== 'function')
+      (typeof hook.run !== 'function')
     ) {
       return false;
     }
 
-    this._hooks.push(hook.caller);
+    this._hooks.push(hook);
     return true;
   }
 
-  protected static getHooks(): readonly TSHook[] {
-    return this._hooks;
+  /*
+   *
+   */
+  public run = async (str: string): Promise<string> => {
+    this.hook_index = -1;
+    return this.eachHooks(str);
   }
 
-  protected eachHooks(fullOrDef: string): Promise<string> {
-    const static_ = (this.constructor as typeof strTransformHookable);
+  /*
+   *
+   */
+  public getHooks = (key: number | boolean = false): ISHookTO | readonly ISHookTO[] => {
+    if (key === false) {
+      return this._hooks;
+    }
 
+    if (this.hook_index >= this.hookLen()) {
+      throw `${this.constructor.name}: hook_index is greater than hooLen in "getHooks"`;
+    }
+
+    return this._hooks[this.hook_index];
+  }
+
+  /*
+   *
+   */
+  protected async eachHooks(str: string): Promise<string> {
     return new Promise<string>((R0, R_0) => {
-      if (this.hook_index < static_.hookLen()) {
-        return static_.getHooks()[this.hook_index++](fullOrDef, <ISTRHookableTransform>this)
-          .then((r) => this.eachHooks(r).then((r2) => R0(r2)));
-      }
+      return (async () => {
+        this.hook_index++;
 
-      return R0(fullOrDef);
+        let r = await super.run(str);
+
+        /* restart the index while there is some matching hook */
+
+        if (this.hook_index >= this.hookLen()) {
+          let hasMatch: boolean = false;
+
+          for (let k of (<ISHookTO[]>this.getHooks())) {
+            if (k.hook.test(r)) {
+              hasMatch = true;
+              break;
+            }
+          }
+
+          this.hook_index = (hasMatch) ? 0 : this.hook_index;
+        }
+
+        if (this.hook_index < this.hookLen()) {
+          return await this.eachHooks(r);
+        }
+
+        R0(r);
+      })();
     });
   }
 
-  protected processMatch(match: RegExpMatchArray): Promise<string> {
-    this.hook_index = 0;
+  /*
+   *
+   */
+  private getRegex(): RegExp | null {
+    if (this.hookLen() == 0) {
+      return null;
+    }
 
+    if (this.hook_index >= this.hookLen()) {
+      throw `${this.constructor.name}: hook_index is greater than hooLen in ${arguments.callee.name}`;
+    }
+
+    return this._hooks[this.hook_index].hook;
+  }
+
+  /*
+   * OVERWRITED function
+   */
+  protected processMatch = (match: RegExpMatchArray, from: string): Promise<string> => {
     return new Promise<string>((R0, R_0) => {
-      ((defRes: (k: number) => string) => {
-        if (!(this.constructor as typeof strTransformHookable).hookLen()) {
-          R0(defRes(3));
-        }
-
-        this.eachHooks(defRes(3));
-      })((k: number): string => {
-        const r: boolean | string = (match.length > k)
-          ? match[k]
-          : (
-            this.defkey
-              ? this.defkey
-              : (
-                (match.length > 0)
-                  ? match[0]
-                  : false
-              )
-          );
-
-        if (r === false) {
-          return `strTransformHookable::processMatch: match with unknow default value and invalid match parameter.`;
-        }
-
-        return r;
-      });
+      return (<ISHookTO>this.getHooks(this.hook_index))
+        .run(match, from)
+        .then((r) => R0(r));
     });
   }
 }

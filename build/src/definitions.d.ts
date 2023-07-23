@@ -4,15 +4,19 @@ export type TstringTransform = (src: TSSource, defkey: string, ukn: TSReplacerAl
 export type TSFilterValue = (value: any, match: string, ...args: any[]) => Promise<string>;
 export type TSPromiseMatch = (match: string, ...args: any[]) => Promise<string>;
 export type TSReplaceAsync = (searchValue: string | RegExp, replacer: string | TSPromiseMatch) => Promise<string>;
-export type TSHookTO = {
+export interface ISHookTO {
     hook: RegExp;
-    caller: TSHook;
-};
-export interface ISTRHookableTransform {
+    run: TSReplacerAllAsync;
 }
-export type TSReplacerAllAsync = (match: RegExpMatchArray) => Promise<string>;
+export type TSDinamicRegexGetter = () => RegExp | null;
+export interface ISTRHookableTransform {
+    addHook: (hook: ISHookTO) => boolean;
+    hookLen: () => number;
+    run: (str: string) => Promise<string>;
+    getHooks: (key: number | boolean) => ISHookTO | readonly ISHookTO[];
+}
+export type TSReplacerAllAsync = (match: RegExpMatchArray, from: string) => Promise<string>;
 export type TSReplaceFilter = (value: string, match: RegExpMatchArray) => Promise<string>;
-export type TSHook = (fullOrDef: string, transformer: ISTRHookableTransform) => Promise<string>;
 export type TSReplaceAllAsync = (searchValue: RegExp, replacer: TSReplacerAllAsync) => Promise<string>;
 declare global {
     export interface String {

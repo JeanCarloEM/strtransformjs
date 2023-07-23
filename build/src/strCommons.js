@@ -20,29 +20,29 @@ strCommons.replaceAsync = (input, regex, replacer) => __awaiter(void 0, void 0, 
     const data = yield Promise.all(promises);
     return input.replace(regex, r => data.shift());
 });
-strCommons.replaceAllAsync = (input, regex, replacement, mode = PromiseExecutionMode.All) => __awaiter(void 0, void 0, void 0, function* () {
-    const addGlobal = !regex.flags.includes("g");
-    let flags = regex.flags;
+strCommons.replaceAllAsync = (str, pattern, replacer, mode = PromiseExecutionMode.All) => __awaiter(void 0, void 0, void 0, function* () {
+    const addGlobal = !pattern.flags.includes("g");
+    let flags = pattern.flags;
     if (addGlobal)
         flags += "g";
-    let matcher = new RegExp(regex.source, flags);
-    const matches = [...input.matchAll(matcher)];
+    let regex = new RegExp(pattern.source, flags);
+    const matches = [...str.matchAll(regex)];
     if (matches.length == 0)
-        return input;
+        return str;
     let replacements = [];
     if (mode == PromiseExecutionMode.All) {
-        replacements = yield Promise.all(matches.map(match => replacement(match)));
+        replacements = yield Promise.all(matches.map(match => replacer(match, str)));
     }
     else if (mode == PromiseExecutionMode.ForEach) {
         replacements = new Array();
         for (let m of matches) {
-            let r = yield replacement(m);
+            let r = yield replacer(m, str);
             replacements.push(r);
         }
     }
-    let source = regex.source.replace(/(?<!\\)\((?!\?:)/g, "(?:");
-    let splitter = new RegExp(source, flags);
-    const parts = input.split(splitter);
+    let src = pattern.source.replace(/(?<!\\)\((?!\?:)/g, "(?:");
+    let splitter = new RegExp(src, flags);
+    const parts = str.split(splitter);
     let result = parts[0];
     for (let i = 0; i < replacements.length; i++) {
         result += replacements[i] + parts[i + 1];

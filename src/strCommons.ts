@@ -1,4 +1,4 @@
-import { PromiseExecutionMode, TSPromiseMatch } from "./definitions.js";
+import { TSReplacerAllAsync, PromiseExecutionMode, TSPromiseMatch } from "./definitions.js";
 
 
 export abstract class strCommons {
@@ -18,41 +18,41 @@ export abstract class strCommons {
    * https://keestalkstech.com/2023/04/building-a-replace-all-async-in-typescript/
    */
   public static replaceAllAsync = async (
-    input: string,
-    regex: RegExp,
-    replacement: (match: RegExpMatchArray) => Promise<string>,
+    str: string,
+    pattern: RegExp,
+    replacer: TSReplacerAllAsync,
     mode: PromiseExecutionMode = PromiseExecutionMode.All
   ): Promise<string> => {
     // replace all implies global, so append if it is missing
-    const addGlobal = !regex.flags.includes("g")
-    let flags = regex.flags
+    const addGlobal = !pattern.flags.includes("g")
+    let flags = pattern.flags
     if (addGlobal) flags += "g"
 
     // get matches
-    let matcher = new RegExp(regex.source, flags)
-    const matches = [...input.matchAll(matcher)];
+    let regex = new RegExp(pattern.source, flags)
+    const matches = [...str.matchAll(regex)];
 
-    if (matches.length == 0) return input
+    if (matches.length == 0) return str
 
     // construct all replacements
-    let replacements: Array<string> = [];
+    let replacements: string[] = [];
 
     if (mode == PromiseExecutionMode.All) {
-      replacements = await Promise.all(matches.map(match => replacement(match)))
+      replacements = await Promise.all(matches.map(match => replacer(match, str)))
     } else if (mode == PromiseExecutionMode.ForEach) {
       replacements = new Array<string>()
       for (let m of matches) {
-        let r = await replacement(m)
+        let r = await replacer(m, str)
         replacements.push(r)
       }
     }
 
     // change capturing groups into non-capturing groups for split
     // (because capturing groups are added to the parts array
-    let source = regex.source.replace(/(?<!\\)\((?!\?:)/g, "(?:")
-    let splitter = new RegExp(source, flags)
+    let src = pattern.source.replace(/(?<!\\)\((?!\?:)/g, "(?:")
+    let splitter = new RegExp(src, flags)
 
-    const parts = input.split(splitter)
+    const parts = str.split(splitter)
 
     // stitch everything back together
     let result = parts[0]
@@ -60,6 +60,6 @@ export abstract class strCommons {
       result += replacements[i] + parts[i + 1]
     }
 
-    return result
+    return result;
   }
 }

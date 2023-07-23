@@ -1,5 +1,5 @@
-import { PromiseExecutionMode, TSDinamicRegexGetter, TSReplacerAllAsync, TSPromiseMatch, TSReplaceFilter } from "./definitions";
-import { strCommons } from "./strCommons";
+import { PromiseExecutionMode, TSDinamicRegexGetter, TSReplacerAllAsync, TSPromiseMatch, TSReplaceFilter } from "./definitions.js";
+import { strCommons } from "./strCommons.js";
 
 
 /**
@@ -59,7 +59,9 @@ export abstract class strEmbryonicTransform extends strCommons {
    *
    */
   public async run(str: string): Promise<string> {
-    return this.recursiveTransform(str);
+    return this.recursiveTransform(str).then((r) => {
+      return r;
+    });
   }
 
   /**
@@ -83,32 +85,46 @@ export abstract class strEmbryonicTransform extends strCommons {
    */
   private async recursiveTransform(str: string): Promise<string> {
     return new Promise<string>((R0, R_0) => {
-      if (!this.regex) {
-        throw `${this.constructor.name}: No reported expression in ${arguments.callee.name}`
-      }
+      (async () => {
+        if (!this.regex) {
+          throw `${this.constructor.name}: No reported expression in "recursiveTransform"`
+        }
 
-      const regex = (typeof this.regex === 'function')
-        ? this.regex()
-        : this.regex;
+        const regex = (typeof this.regex === 'function')
+          ? this.regex()
+          : this.regex;
 
-      if (!regex) {
-        throw `${this.constructor.name}> Null expression returned in getter ${arguments.callee.name}`
-      }
+        if (!regex) {
+          throw `${this.constructor.name}: Null expression returned in getter "recursiveTransform"`
+        }
 
-      if (!str.match(regex)) {
-        return R0(str);
-      }
+        /* FINISH RECURSIVE HERE */
+        if (!regex.test(str)) {
+          return R0(str);
+        }
 
-      if (++this.limiteRunLoop_counter > this.limiteRunLoop) {
-        return R_0('Over processing.');
-      }
+        /* Continue Recursive */
+        if (++this.limiteRunLoop_counter > this.limiteRunLoop) {
+          throw `${this.constructor.name}: Over processing in "recursiveTransform"`
+        }
 
-      strCommons.replaceAllAsync(
-        str,
-        regex,
-        this.processAndApplyFilter,
-        PromiseExecutionMode.All
-      );
+        str = await strCommons.replaceAllAsync(
+          str,
+          regex,
+          /* .replaceAll Async loses the "this" reference
+           * of this class, so its method needs to be wrapped.
+           */
+          (match: RegExpMatchArray, from: string = ""): Promise<string> => {
+            return this.processAndApplyFilter(match, from);
+          },
+          PromiseExecutionMode.All
+        )
+
+        /* recursive call */
+        str = await this.recursiveTransform(str);
+
+        R0(str);
+      })();
     });
   }
 
@@ -129,6 +145,7 @@ export abstract class strEmbryonicTransform extends strCommons {
   private async processAndApplyFilter(match: RegExpMatchArray, from: string = ""): Promise<string> {
     return new Promise<string>((R1, R_1) => {
       this.processMatch(match, from)
+
         /* if null: unknow resolve */
         .then((r) => {
           if ((r === null) && (typeof this.ukn === "function")) {
@@ -136,6 +153,7 @@ export abstract class strEmbryonicTransform extends strCommons {
           }
           return r;
         })
+
         /* if null persists after ukn() */
         .then((r) => {
           const DEF = this.defReplace.trim();
@@ -145,6 +163,7 @@ export abstract class strEmbryonicTransform extends strCommons {
           }
           return r;
         })
+
         /* filter any result */
         .then((r) => {
           if (this.filter) {
@@ -152,10 +171,10 @@ export abstract class strEmbryonicTransform extends strCommons {
           }
           return r;
         })
+
         /* recursive call replace */
         .then((r) => {
-          this.recursiveTransform(r)
-            .then((rr) => R1(rr));
+          R1(r)
         })
         .catch(r => R_1(r));
     });

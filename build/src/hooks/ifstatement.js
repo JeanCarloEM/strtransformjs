@@ -3,7 +3,7 @@ export class ifstatementHook {
         this.hook = /(?<if>[^\:\?\{\}\(\)\$]*)\?(?<true>((?:[^\:\?\{\}\(\)\$]|\\.)*))\:(?<false>((?:[^\:\?\{\}\(\)\$]|\\.)*))/gi;
         this.run = (match, from) => {
             return new Promise((R0, R_0) => {
-                R0("a");
+                R0("__b__");
             });
         };
     }

@@ -1,29 +1,10 @@
-class myClass {
-  private static propA: any[] = ["a", "b"];
+import * as core from "../../src/strTransformCore.js";
 
-  public myMehod(): Promise<any[]> {
-    return new Promise<any[]>((res) => {
-      /* call the eventually overridden static method */
-      let x: any[] = (this.constructor as typeof myClass).getter(); // << here need
-      /* ... */
-      res(x);
-    });
-  }
+console.log('Iniciando testes...');
 
-
-  public static getter(): any[] {
-    return this.propA;
-  }
-}
-
-export class childClass extends myClass {
-  private static probB: any[] = [1, 2, 3];
-
-  /* overridden static method, which is invoked by the parent */
-  public static getter(): any[] {
-    return myClass.getter().concat(this.probB);
-  }
-}
-
-(new childClass()).myMehod().then((r) => console.log(r));
-// show: ["a", "b", 1, 2, 3];
+(new core.strTransformeCore()
+  .run((<HTMLElement>document.querySelector("#parser")).innerHTML)
+  .then((r) => {
+    (<HTMLElement>document.querySelector("#parser")).innerHTML = r;
+  })
+  .catch((r) => console.error(r)));

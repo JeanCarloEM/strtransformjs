@@ -1,5 +1,5 @@
-import { TSDinamicRegexGetter, TSReplacerAllAsync, TSReplaceFilter } from "./definitions";
-import { strCommons } from "./strCommons";
+import { TSDinamicRegexGetter, TSReplacerAllAsync, TSReplaceFilter } from "./definitions.js";
+import { strCommons } from "./strCommons.js";
 export declare abstract class strEmbryonicTransform extends strCommons {
     protected regex: null | RegExp | TSDinamicRegexGetter;
     readonly defReplace: string;

@@ -1,5 +1,5 @@
-import { TSReplaceFilter, ISHookTO, TSReplacerAllAsync, ISTRHookableTransform } from "./definitions";
-import { strEmbryonicTransform as strFetusTransform } from "./strEmbryonicTransform";
+import { TSReplaceFilter, ISHookTO, TSReplacerAllAsync, ISTRHookableTransform } from "./definitions.js";
+import { strEmbryonicTransform as strFetusTransform } from "./strEmbryonicTransform.js";
 export declare class strTransformHookable extends strFetusTransform implements ISTRHookableTransform {
     private _hooks;
     private hook_index;

@@ -7,8 +7,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { PromiseExecutionMode } from "./definitions";
-import { strCommons } from "./strCommons";
+import { PromiseExecutionMode } from "./definitions.js";
+import { strCommons } from "./strCommons.js";
 String.prototype.replaceAllAsync = function (searchValue, replacer) {
     return __awaiter(this, void 0, void 0, function* () {
         return strEmbryonicTransform.replaceAllAsync("" + this, searchValue, replacer);
@@ -31,28 +31,36 @@ export class strEmbryonicTransform extends strCommons {
     }
     run(str) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.recursiveTransform(str);
+            return this.recursiveTransform(str).then((r) => {
+                return r;
+            });
         });
     }
     recursiveTransform(str) {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((R0, R_0) => {
-                if (!this.regex) {
-                    throw `${this.constructor.name}: No reported expression in ${arguments.callee.name}`;
-                }
-                const regex = (typeof this.regex === 'function')
-                    ? this.regex()
-                    : this.regex;
-                if (!regex) {
-                    throw `${this.constructor.name}> Null expression returned in getter ${arguments.callee.name}`;
-                }
-                if (!str.match(regex)) {
-                    return R0(str);
-                }
-                if (++this.limiteRunLoop_counter > this.limiteRunLoop) {
-                    return R_0('Over processing.');
-                }
-                strCommons.replaceAllAsync(str, regex, this.processAndApplyFilter, PromiseExecutionMode.All);
+                (() => __awaiter(this, void 0, void 0, function* () {
+                    if (!this.regex) {
+                        throw `${this.constructor.name}: No reported expression in "recursiveTransform"`;
+                    }
+                    const regex = (typeof this.regex === 'function')
+                        ? this.regex()
+                        : this.regex;
+                    if (!regex) {
+                        throw `${this.constructor.name}: Null expression returned in getter "recursiveTransform"`;
+                    }
+                    if (!regex.test(str)) {
+                        return R0(str);
+                    }
+                    if (++this.limiteRunLoop_counter > this.limiteRunLoop) {
+                        throw `${this.constructor.name}: Over processing in "recursiveTransform"`;
+                    }
+                    str = yield strCommons.replaceAllAsync(str, regex, (match, from = "") => {
+                        return this.processAndApplyFilter(match, from);
+                    }, PromiseExecutionMode.All);
+                    str = yield this.recursiveTransform(str);
+                    R0(str);
+                }))();
             });
         });
     }
@@ -80,8 +88,7 @@ export class strEmbryonicTransform extends strCommons {
                     return r;
                 })
                     .then((r) => {
-                    this.recursiveTransform(r)
-                        .then((rr) => R1(rr));
+                    R1(r);
                 })
                     .catch(r => R_1(r));
             });

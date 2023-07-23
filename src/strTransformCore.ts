@@ -1,9 +1,9 @@
 
 import { TSReplaceFilter, TSReplacerAllAsync, ISTRHookableTransform, ISHookTO, TSSource } from "./definitions";
-import { strTransformHookable } from "./strTransformHookable";
-import { mainHook } from "./hooks/main";
-import { ifstatementHook } from "./hooks/ifstatement";
-import { paranthesesHook } from "./hooks/parantheses";
+import { strTransformHookable } from "./strTransformHookable.js";
+import { mainHook } from "./hooks/main.js";
+import { ifstatementHook } from "./hooks/ifstatement.js";
+import { paranthesesHook } from "./hooks/parantheses.js";
 
 /*
  *

@@ -1,6 +1,6 @@
 
-import { TSReplaceFilter, ISHookTO, TSReplacerAllAsync, ISTRHookableTransform } from "./definitions";
-import { strEmbryonicTransform as strFetusTransform } from "./strEmbryonicTransform";
+import { TSReplaceFilter, ISHookTO, TSReplacerAllAsync, ISTRHookableTransform } from "./definitions.js";
+import { strEmbryonicTransform as strFetusTransform } from "./strEmbryonicTransform.js";
 
 
 /*
@@ -103,7 +103,7 @@ export class strTransformHookable extends strFetusTransform implements ISTRHooka
     }
 
     if (this.hook_index >= this.hookLen()) {
-      throw `${this.constructor.name}: hook_index is greater than hooLen in "getHooks"`;
+      throw `${this.constructor.name}: hook_index (${this.hook_index}) is >= to hooLen in (${this.hookLen()}) in "getHooks"`;
     }
 
     return this._hooks[this.hook_index];
@@ -120,15 +120,12 @@ export class strTransformHookable extends strFetusTransform implements ISTRHooka
       return (async () => {
         this.hook_index++;
 
-        let r = await super.run(str);
-
         /* restart the index while there is some matching hook */
-
         if (this.hook_index >= this.hookLen()) {
           let hasMatch: boolean = false;
 
           for (let k of (<ISHookTO[]>this.getHooks())) {
-            if (k.hook.test(r)) {
+            if (k.hook.test(str)) {
               hasMatch = true;
               break;
             }
@@ -137,8 +134,14 @@ export class strTransformHookable extends strFetusTransform implements ISTRHooka
           this.hook_index = (hasMatch) ? 0 : this.hook_index;
         }
 
-        if (this.hook_index < this.hookLen()) {
-          return await this.eachHooks(r);
+        if (this.hook_index >= this.hookLen()) {
+          return R0(str);
+        }
+
+        let r = await super.run(str);
+
+        if (this.hook_index < (this.hookLen()-1)) {
+          r = await this.eachHooks(r);
         }
 
         R0(r);
@@ -155,7 +158,7 @@ export class strTransformHookable extends strFetusTransform implements ISTRHooka
     }
 
     if (this.hook_index >= this.hookLen()) {
-      throw `${this.constructor.name}: hook_index is greater than hooLen in ${arguments.callee.name}`;
+      throw `${this.constructor.name}: hook_index (${this.hook_index}) is >= to hooLen in (${this.hookLen()}) in "getRegex"`;
     }
 
     return this._hooks[this.hook_index].hook;
@@ -182,8 +185,3 @@ export class strTransformHookable extends strFetusTransform implements ISTRHooka
     });
   }
 }
-
-
-
-
-

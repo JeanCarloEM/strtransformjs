@@ -5,7 +5,7 @@ export class ifstatementHook implements ISHookTO {
 
   public run = (match: RegExpMatchArray, from: string): Promise<string> => {
     return new Promise<string>((R0, R_0) => {
-      R0("a");
+      R0("__b__");
     });
   }
 }

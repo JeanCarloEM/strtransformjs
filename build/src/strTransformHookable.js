@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { strEmbryonicTransform as strFetusTransform } from "./strEmbryonicTransform";
+import { strEmbryonicTransform as strFetusTransform } from "./strEmbryonicTransform.js";
 export class strTransformHookable extends strFetusTransform {
     constructor(_hooks, defReplace = "", ukn = null, filter = null) {
         super(null, defReplace, ukn, filter);
@@ -45,7 +45,7 @@ export class strTransformHookable extends strFetusTransform {
             return this._hooks;
         }
         if (this.hook_index >= this.hookLen()) {
-            throw `${this.constructor.name}: hook_index is greater than hooLen in "getHooks"`;
+            throw `${this.constructor.name}: hook_index (${this.hook_index}) is >= to hooLen in (${this.hookLen()}) in "getHooks"`;
         }
         return this._hooks[this.hook_index];
     }
@@ -57,19 +57,22 @@ export class strTransformHookable extends strFetusTransform {
             return new Promise((R0, R_0) => {
                 return (() => __awaiter(this, void 0, void 0, function* () {
                     this.hook_index++;
-                    let r = yield _super.run.call(this, str);
                     if (this.hook_index >= this.hookLen()) {
                         let hasMatch = false;
                         for (let k of this.getHooks()) {
-                            if (k.hook.test(r)) {
+                            if (k.hook.test(str)) {
                                 hasMatch = true;
                                 break;
                             }
                         }
                         this.hook_index = (hasMatch) ? 0 : this.hook_index;
                     }
-                    if (this.hook_index < this.hookLen()) {
-                        return yield this.eachHooks(r);
+                    if (this.hook_index >= this.hookLen()) {
+                        return R0(str);
+                    }
+                    let r = yield _super.run.call(this, str);
+                    if (this.hook_index < (this.hookLen() - 1)) {
+                        r = yield this.eachHooks(r);
                     }
                     R0(r);
                 }))();
@@ -81,7 +84,7 @@ export class strTransformHookable extends strFetusTransform {
             return null;
         }
         if (this.hook_index >= this.hookLen()) {
-            throw `${this.constructor.name}: hook_index is greater than hooLen in ${arguments.callee.name}`;
+            throw `${this.constructor.name}: hook_index (${this.hook_index}) is >= to hooLen in (${this.hookLen()}) in "getRegex"`;
         }
         return this._hooks[this.hook_index].hook;
     }

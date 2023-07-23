@@ -1,4 +1,4 @@
-export class ifstatement {
+export class ifstatementHook {
     constructor() {
         this.hook = /(?<if>[^\:\?\{\}\(\)\$]*)\?(?<true>((?:[^\:\?\{\}\(\)\$]|\\.)*))\:(?<false>((?:[^\:\?\{\}\(\)\$]|\\.)*))/gi;
         this.run = (match, from) => {

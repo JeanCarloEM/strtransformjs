@@ -1,5 +1,4 @@
-import { TSReplacerAllAsync, PromiseExecutionMode, TSPromiseMatch } from "./definitions.js";
-
+import { strEmbryonicTransform, TSReplacerAllAsync, PromiseExecutionMode, TSPromiseMatch } from "./definitions.js";
 
 export abstract class strCommons {
   public static replaceAsync = async (

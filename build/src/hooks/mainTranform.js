@@ -1,4 +1,4 @@
-export class mainHook {
+export class mainTranform {
     constructor() {
         this.hook = /((\$\{)((?:[^\{\}\$\\]|\\.)*)\}|(\{\{\{)((?:[^\{\}\$\\]|\\.)*)\}\}\}|(\{\{)((?:[^\{\}\$\\]|\\.)*)\}\})/gi;
         this.run = (match, from) => {
@@ -8,4 +8,4 @@ export class mainHook {
         };
     }
 }
-//# sourceMappingURL=main.js.map
+//# sourceMappingURL=mainTranform.js.map

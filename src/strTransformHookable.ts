@@ -10,7 +10,14 @@ import { strEmbryonicTransform as strFetusTransform } from "./strEmbryonicTransf
 export class strTransformHookable extends strFetusTransform implements ISTRHookableTransform {
   private hook_index: number = 0;
 
-  /*
+  /**
+   *
+   * @param _hook       - a list of default hooks to transform text
+   * @param defReplace  - the pattern string (text) to be removed
+   *                      if the processor and ukn() do not resolve
+   * @param ukn         - function called to resolve when the processor
+   *                      returns null (this is a dynamic default)
+   * @param filter      - function that filters the transformed text
    *
    */
   constructor(
@@ -23,17 +30,24 @@ export class strTransformHookable extends strFetusTransform implements ISTRHooka
     this.regex = this.getRegex;
   }
 
-  /*
+  /**
    *
+   * Get length of ISHookTO[]
+   *
+   * @returns the length of ISHookTO[]
    */
-  public hookLen = (): number => {
+  public hookLen(): number {
     return (<ISHookTO[]>this.getHooks()).length;
   }
 
-  /*
+  /**
+   * Add hook to transforme string(text)
    *
+   * @param hook - the hook object to add
+   *
+   * @returns true if added and false otherwise
    */
-  public addHook = (hook: ISHookTO): boolean => {
+  public addHook(hook: ISHookTO): boolean {
     /*
      * runtime check type
      *
@@ -59,7 +73,13 @@ export class strTransformHookable extends strFetusTransform implements ISTRHooka
     return true;
   }
 
-  /*
+  /**
+   * Main function
+   *
+   * @override
+   *
+   * @param str - the string(text) to be transformed
+   * @returns the text fully transformed
    *
    */
   public run = async (str: string): Promise<string> => {
@@ -67,10 +87,17 @@ export class strTransformHookable extends strFetusTransform implements ISTRHooka
     return this.eachHooks(str);
   }
 
-  /*
+  /**
    *
+   * Gets the registered hook(s).
+   *
+   * @param key - optional, specifies the hook index to be returned
+   *
+   * @returns If key is informed and it exists, it will
+   *          return the gain, otherwise it will return
+   *          the array of hooks
    */
-  public getHooks = (key: number | boolean = false): ISHookTO | readonly ISHookTO[] => {
+  public getHooks(key: number | boolean = false): ISHookTO | readonly ISHookTO[] {
     if (key === false) {
       return this._hooks;
     }
@@ -82,8 +109,11 @@ export class strTransformHookable extends strFetusTransform implements ISTRHooka
     return this._hooks[this.hook_index];
   }
 
-  /*
+  /**
+   * Loop recursively array of hooks and apply each to str
    *
+   * @param str -the string(text) to be transformed
+   * @returns the text fully transformed
    */
   protected async eachHooks(str: string): Promise<string> {
     return new Promise<string>((R0, R_0) => {
@@ -116,7 +146,7 @@ export class strTransformHookable extends strFetusTransform implements ISTRHooka
     });
   }
 
-  /*
+  /**
    *
    */
   private getRegex(): RegExp | null {
@@ -131,8 +161,18 @@ export class strTransformHookable extends strFetusTransform implements ISTRHooka
     return this._hooks[this.hook_index].hook;
   }
 
-  /*
-   * OVERWRITED function
+  /**
+   *
+   * Function responsible for returning the transformed value
+   *
+   * @override
+   * @internal
+   *
+   * @param match - the array returned by .replaceAllAsync()
+   * @param from  - optional, the original string to which the regex was applied
+   *
+   * @returns the text transformed by the specific text processor
+   *
    */
   protected processMatch = (match: RegExpMatchArray, from: string): Promise<string> => {
     return new Promise<string>((R0, R_0) => {

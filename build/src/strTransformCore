@@ -1,6 +1,9 @@
 
 import { TSReplaceFilter, TSReplacerAllAsync, ISTRHookableTransform, ISHookTO, TSSource } from "./definitions";
 import { strTransformHookable } from "./strTransformHookable";
+import { mainHook } from "./hooks/main";
+import { ifstatementHook } from "./hooks/ifstatement";
+import { paranthesesHook } from "./hooks/parantheses";
 
 /*
  *
@@ -21,22 +24,32 @@ String.prototype.tranform = function (
  */
 
 export class strTransformeCore extends strTransformHookable {
+  /**
+   *
+   * @param src         - an object containing the variables applicable
+   *                      to the transformation
+   * @param defReplace  - the pattern string (text) to be removed
+   *                      if the processor and ukn() do not resolve
+   * @param ukn         - function called to resolve when the processor
+   *                      returns null (this is a dynamic default)
+   * @param filter      - function that filters the transformed text
+   *
+   */
   constructor(
-    private src: TSSource,
+    private src: TSSource = {},
     defReplace: string = "",
     ukn: null | TSReplacerAllAsync = null,
     filter: null | TSReplaceFilter = null
   ) {
     super(
-      new Array<ISHookTO>(),
+      [
+        new mainHook(),
+        new ifstatementHook(),
+        new paranthesesHook()
+      ],
       defReplace,
       ukn,
       filter
     );
   }
 }
-
-
-
-
-

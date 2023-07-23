@@ -1,6 +1,6 @@
-import { ISTRHookableTransform, ISHookTO } from "../definitions"
+import {  ISHookTO } from "../definitions"
 
-export class ifstatement implements ISHookTO {
+export class ifstatementHook implements ISHookTO {
   public hook: RegExp = /(?<if>[^\:\?\{\}\(\)\$]*)\?(?<true>((?:[^\:\?\{\}\(\)\$]|\\.)*))\:(?<false>((?:[^\:\?\{\}\(\)\$]|\\.)*))/gi;
 
   public run = (match: RegExpMatchArray, from: string): Promise<string> => {

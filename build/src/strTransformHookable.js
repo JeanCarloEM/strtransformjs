@@ -13,33 +13,10 @@ export class strTransformHookable extends strFetusTransform {
         super(null, defReplace, ukn, filter);
         this._hooks = _hooks;
         this.hook_index = 0;
-        this.hookLen = () => {
-            return this.getHooks().length;
-        };
-        this.addHook = (hook) => {
-            if ((typeof hook !== "object") ||
-                (!hook.hasOwnProperty('hook')) ||
-                (!(hook.hook instanceof RegExp)) ||
-                (!hook.hasOwnProperty('caller')) ||
-                (typeof hook.run !== 'function')) {
-                return false;
-            }
-            this._hooks.push(hook);
-            return true;
-        };
         this.run = (str) => __awaiter(this, void 0, void 0, function* () {
             this.hook_index = -1;
             return this.eachHooks(str);
         });
-        this.getHooks = (key = false) => {
-            if (key === false) {
-                return this._hooks;
-            }
-            if (this.hook_index >= this.hookLen()) {
-                throw `${this.constructor.name}: hook_index is greater than hooLen in "getHooks"`;
-            }
-            return this._hooks[this.hook_index];
-        };
         this.processMatch = (match, from) => {
             return new Promise((R0, R_0) => {
                 return this.getHooks(this.hook_index)
@@ -48,6 +25,29 @@ export class strTransformHookable extends strFetusTransform {
             });
         };
         this.regex = this.getRegex;
+    }
+    hookLen() {
+        return this.getHooks().length;
+    }
+    addHook(hook) {
+        if ((typeof hook !== "object") ||
+            (!hook.hasOwnProperty('hook')) ||
+            (!(hook.hook instanceof RegExp)) ||
+            (!hook.hasOwnProperty('caller')) ||
+            (typeof hook.run !== 'function')) {
+            return false;
+        }
+        this._hooks.push(hook);
+        return true;
+    }
+    getHooks(key = false) {
+        if (key === false) {
+            return this._hooks;
+        }
+        if (this.hook_index >= this.hookLen()) {
+            throw `${this.constructor.name}: hook_index is greater than hooLen in "getHooks"`;
+        }
+        return this._hooks[this.hook_index];
     }
     eachHooks(str) {
         const _super = Object.create(null, {

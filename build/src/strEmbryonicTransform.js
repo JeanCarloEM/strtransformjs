@@ -7,6 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+import { PromiseExecutionMode } from "./definitions";
 import { strCommons } from "./strCommons";
 String.prototype.replaceAllAsync = function (searchValue, replacer) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -51,7 +52,7 @@ export class strEmbryonicTransform extends strCommons {
                 if (++this.limiteRunLoop_counter > this.limiteRunLoop) {
                     return R_0('Over processing.');
                 }
-                str.replaceAllAsync(regex, this.processAndApplyFilter);
+                strCommons.replaceAllAsync(str, regex, this.processAndApplyFilter, PromiseExecutionMode.All);
             });
         });
     }

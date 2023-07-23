@@ -18,7 +18,6 @@
     "clean_folder": "rimraf \"build/\" -I",
     "start": "concurrently \"npm run clean_folder\" \"npm run copy_tests\" \"npm run copy\" \"npm run watch\" \"npm run server\"",
     "minify": ""
-
   },
   "repository": {
     "type": "git",
@@ -44,6 +43,7 @@
     "rimraf": "^5.0.1",
     "tsc-hooks": "^1.1.2",
     "tsc-watch": "^6.0.4",
+    "typedoc": "^0.24.8",
     "typescript": "^5.1.6"
   },
   "dependencies": {

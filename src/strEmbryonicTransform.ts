@@ -1,7 +1,8 @@
-import { TSDinamicRegexGetter, TSReplacerAllAsync, TSPromiseMatch, TSReplaceFilter } from "./definitions";
+import { PromiseExecutionMode, TSDinamicRegexGetter, TSReplacerAllAsync, TSPromiseMatch, TSReplaceFilter } from "./definitions";
 import { strCommons } from "./strCommons";
 
-/*
+
+/**
  *
  */
 String.prototype.replaceAllAsync = async function (
@@ -12,7 +13,7 @@ String.prototype.replaceAllAsync = async function (
 }
 
 
-/*
+/**
  *
  */
 String.prototype.replaceAsync = async function (
@@ -22,13 +23,24 @@ String.prototype.replaceAsync = async function (
   return strEmbryonicTransform.replaceAsync("" + this, searchValue, replacer);
 }
 
-/*
+
+/**
  *
  */
 export abstract class strEmbryonicTransform extends strCommons {
   private limiteRunLoop_counter: number = 0;
   public readonly limiteRunLoop: number = 1000;
 
+  /**
+   *
+   * @param regex       - the pattern to match or a function that
+   *                      returns a pattern
+   * @param defReplace  - the pattern string (text) to be removed
+   *                      if the processor and ukn() do not resolve
+   * @param ukn         - function called to resolve when the processor
+   *                      returns null (this is a dynamic default)
+   * @param filter      - function that filters the transformed text
+   */
   constructor(
     protected regex: null | RegExp | TSDinamicRegexGetter = null,
     public readonly defReplace: string = "",
@@ -38,12 +50,37 @@ export abstract class strEmbryonicTransform extends strCommons {
     super();
   }
 
+  /**
+   * Main function
+   *
+   * @param str -the string(text) to be transformed
+   *
+   * @returns the text fully transformed
+   *
+   */
   public async run(str: string): Promise<string> {
     return this.recursiveTransform(str);
   }
 
+  /**
+   * Function responsible for returning the transformed value
+   *
+   * @param match - the array returned by .replaceAllAsync()
+   * @param from  - optional, the original string to which the regex was applied
+   *
+   * @returns the text transformed by the specific text processor
+   */
   protected abstract processMatch: TSReplacerAllAsync;
 
+  /**
+   * Used to create a loop with .processAndApplyFilter() to ensure that all transformations are performed
+   *
+   * @internal
+   *
+   * @param str -the string(text) to be transformed
+   *
+   * @returns the text transformed, rectified, and filtered, through several passes
+   */
   private async recursiveTransform(str: string): Promise<string> {
     return new Promise<string>((R0, R_0) => {
       if (!this.regex) {
@@ -66,13 +103,29 @@ export abstract class strEmbryonicTransform extends strCommons {
         return R_0('Over processing.');
       }
 
-      str.replaceAllAsync(
+      strCommons.replaceAllAsync(
+        str,
         regex,
-        this.processAndApplyFilter
+        this.processAndApplyFilter,
+        PromiseExecutionMode.All
       );
     });
   }
 
+  /**
+   *
+   * Used to create a loop with .recursiveTransform() to check
+   * [1] resolution (and return default values
+   *     ​​defined in this.ukn() and this.defReplace)
+   * [2] apply filter
+   *
+   * @internal
+   *
+   * @param match - the array returned by .replaceAllAsync()
+   * @param from  - optional, the original string to which the regex was applied
+   *
+   * @returns the text transformed, checked, and filtered
+   */
   private async processAndApplyFilter(match: RegExpMatchArray, from: string = ""): Promise<string> {
     return new Promise<string>((R1, R_1) => {
       this.processMatch(match, from)

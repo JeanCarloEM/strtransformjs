@@ -12,6 +12,14 @@ import { PromiseExecutionMode } from "./definitions.js";
 export class strCommons {
 }
 _a = strCommons;
+strCommons.makeRegexIn = (input, dollar, curly, curly3, square) => {
+    let x = input.source.replace(/^\//, '').replace(/\/\w*$/, '');
+    let r = dollar ? `\${\\s*${x}\\s*}` : "";
+    r += (r.length ? "|" : "") + (square ? `\[\[\\s*${x}\\s*\]\]` : "");
+    r += (r.length ? "|" : "") + (curly ? `\{\{\\s*${x}\\s*\}\}` : "");
+    r += (r.length ? "|" : "") + (curly3 ? `\{\{\{\\s*${x}\\s*\}\}\}` : "");
+    return new RegExp(`\(${x}\)`);
+};
 strCommons.replaceAsync = (input, regex, replacer) => __awaiter(void 0, void 0, void 0, function* () {
     const promises = [];
     input.replace(regex, function (match, ...args) {
@@ -40,7 +48,7 @@ strCommons.replaceAllAsync = (str, pattern, replacer, mode = PromiseExecutionMod
             replacements.push(r);
         }
     }
-    let src = pattern.source.replace(/(?<!\\)\((?!\?:)/g, "(?:");
+    let src = pattern.source.replace(/(?<!\\)\((?!\?:)(\?\<[\w]+\>)?/g, "(?:");
     let splitter = new RegExp(src, flags);
     const parts = str.split(splitter);
     let result = parts[0];

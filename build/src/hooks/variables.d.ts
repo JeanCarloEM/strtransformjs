@@ -1,6 +1,6 @@
 import { ISHookTO } from "../definitions";
 import { enclauruseHook } from "../enclauruseHook";
-export declare class ifstatementHook extends enclauruseHook implements ISHookTO {
+export declare class variablesHook extends enclauruseHook implements ISHookTO {
     regex: RegExp;
     _indollar: boolean;
     _incurly: boolean;

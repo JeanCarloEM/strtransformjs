@@ -125,7 +125,7 @@ export class strTransformHookable extends strFetusTransform implements ISTRHooka
           let hasMatch: boolean = false;
 
           for (let k of (<ISHookTO[]>this.getHooks())) {
-            if (k.hook.test(str)) {
+            if (k.hook().test(str)) {
               hasMatch = true;
               break;
             }
@@ -140,7 +140,7 @@ export class strTransformHookable extends strFetusTransform implements ISTRHooka
 
         let r = await super.run(str);
 
-        if (this.hook_index < (this.hookLen()-1)) {
+        if (this.hook_index < (this.hookLen() - 1)) {
           r = await this.eachHooks(r);
         }
 
@@ -161,7 +161,7 @@ export class strTransformHookable extends strFetusTransform implements ISTRHooka
       throw `${this.constructor.name}: hook_index (${this.hook_index}) is >= to hooLen in (${this.hookLen()}) in "getRegex"`;
     }
 
-    return this._hooks[this.hook_index].hook;
+    return this._hooks[this.hook_index].hook();
   }
 
   /**

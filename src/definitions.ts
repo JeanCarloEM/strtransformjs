@@ -18,7 +18,7 @@ export type TSReplaceAsync = (
 ) => Promise<string>;
 
 export interface ISHookTO {
-  hook: RegExp,
+  hook: () => RegExp,
   run: TSReplacerAllAsync
 }
 

@@ -60,7 +60,7 @@ export class strTransformHookable extends strFetusTransform {
                     if (this.hook_index >= this.hookLen()) {
                         let hasMatch = false;
                         for (let k of this.getHooks()) {
-                            if (k.hook.test(str)) {
+                            if (k.hook().test(str)) {
                                 hasMatch = true;
                                 break;
                             }
@@ -86,7 +86,7 @@ export class strTransformHookable extends strFetusTransform {
         if (this.hook_index >= this.hookLen()) {
             throw `${this.constructor.name}: hook_index (${this.hook_index}) is >= to hooLen in (${this.hookLen()}) in "getRegex"`;
         }
-        return this._hooks[this.hook_index].hook;
+        return this._hooks[this.hook_index].hook();
     }
 }
 //# sourceMappingURL=strTransformHookable.js.map

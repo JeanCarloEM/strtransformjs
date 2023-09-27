@@ -1,9 +1,10 @@
 
 import { TSReplaceFilter, TSReplacerAllAsync, ISTRHookableTransform, ISHookTO, TSSource } from "./definitions";
 import { strTransformHookable } from "./strTransformHookable.js";
-import { mainHook } from "./hooks/main.js";
-import { ifstatementHook } from "./hooks/ifstatement.js";
-import { paranthesesHook } from "./hooks/parantheses.js";
+import { functionHook } from "./hooks/functions.js";
+import { variablesHook } from "./hooks/variables.js";
+import { expressionsHook } from "./hooks/expressions.js";
+
 
 /*
  *
@@ -43,9 +44,9 @@ export class strTransformeCore extends strTransformHookable {
   ) {
     super(
       [
-        new mainHook(),
-        new ifstatementHook(),
-        new paranthesesHook()
+        new variablesHook(),
+        new functionHook(),
+        new expressionsHook()
       ],
       defReplace,
       ukn,

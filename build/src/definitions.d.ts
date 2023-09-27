@@ -3,7 +3,7 @@ export type TstringTransform = (src: TSSource, defkey: string, ukn: TSReplacerAl
 export type TSPromiseMatch = (match: string, ...args: any[]) => Promise<string>;
 export type TSReplaceAsync = (searchValue: string | RegExp, replacer: string | TSPromiseMatch) => Promise<string>;
 export interface ISHookTO {
-    hook: RegExp;
+    hook: () => RegExp;
     run: TSReplacerAllAsync;
 }
 export type TSDinamicRegexGetter = () => RegExp | null;

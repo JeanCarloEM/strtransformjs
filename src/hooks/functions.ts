@@ -1,5 +1,5 @@
-import { ISHookTO } from "../definitions"
-import { enclauruseHook } from "../enclauruseHook"
+import { ISHookTO } from "../definitions.js"
+import { enclauruseHook } from "../enclauruseHook.js"
 
 
 /**
@@ -9,7 +9,7 @@ import { enclauruseHook } from "../enclauruseHook"
  * scaping (\s*(?:[\w]|\\.)
  */
 export class functionHook extends enclauruseHook implements ISHookTO {
-  public regex : RegExp = /\{?\{\{\s*#?(?<func>[\w]+)\s*\:(?<args>(\s*[^\s\|\{\}\[\]\$\\]+(\s+[^\s\|\{\}\[\]\$\\]+)*)(\s*\|\s*[^\s\|\{\}\[\]\$\\]+(\s+[^\s\|\{\}\[\]\$\\]+)*)*)\s*\}\}\}?/gi;
+  public regex: RegExp = /#?([\w]+)\s*\:((\s*[^\s\|\{\}\[\]\$\\]+(\s+[^\s\|\{\}\[\]\$\\]+)*)(\s*\|\s*[^\s\|\{\}\[\]\$\\]+(\s+[^\s\|\{\}\[\]\$\\]+)*)*)/gi;
   public _indollar: boolean = true;
   public _incurly: boolean = true;
   public _incurly3: boolean = false;
@@ -17,7 +17,7 @@ export class functionHook extends enclauruseHook implements ISHookTO {
 
   public run = (match: RegExpMatchArray, from: string): Promise<string> => {
     return new Promise<string>((R0, R_0) => {
-      const s = '__a\\{b\\}\{c\}\\\\{d\\\\}__';
+      const s = 'functions__a\\{b\\}\{c\}\\\\{d\\\\}__';
       console.warn(s);
       R0(s);
     });

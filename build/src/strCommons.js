@@ -13,12 +13,12 @@ export class strCommons {
 }
 _a = strCommons;
 strCommons.makeRegexIn = (input, dollar, curly, curly3, square) => {
-    let x = input.source.replace(/^\//, '').replace(/\/\w*$/, '');
-    let r = dollar ? `\${\\s*${x}\\s*}` : "";
-    r += (r.length ? "|" : "") + (square ? `\[\[\\s*${x}\\s*\]\]` : "");
-    r += (r.length ? "|" : "") + (curly ? `\{\{\\s*${x}\\s*\}\}` : "");
-    r += (r.length ? "|" : "") + (curly3 ? `\{\{\{\\s*${x}\\s*\}\}\}` : "");
-    return new RegExp(`\(${x}\)`);
+    const x = input.source.replace(/^\//, '').replace(/\/\w*$/, '');
+    let r = dollar ? `\\\$\\\{\\s*${x}\\s*\\\}` : "";
+    r += square ? (r.length ? "|" : "") + `\\\[\\\[\\s*${x}\\s*\\\]\\\]` : "";
+    r += curly ? (r.length ? "|" : "") + `\\\{\\\{\\s*${x}\\s*\\\}\\\}` : "";
+    r += curly3 ? (r.length ? "|" : "") + `\\\{\\\{\{\\s*${x}\\s*\\\}\\\}\\\}` : "";
+    return new RegExp(`(${r})`, input.flags);
 };
 strCommons.replaceAsync = (input, regex, replacer) => __awaiter(void 0, void 0, void 0, function* () {
     const promises = [];

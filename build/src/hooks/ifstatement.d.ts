@@ -1,5 +1,5 @@
-import { ISHookTO } from "../definitions";
-import { enclauruseHook } from "../enclauruseHook";
+import { ISHookTO } from "../definitions.js";
+import { enclauruseHook } from "../enclauruseHook.js";
 export declare class ifstatementHook extends enclauruseHook implements ISHookTO {
     regex: RegExp;
     _indollar: boolean;

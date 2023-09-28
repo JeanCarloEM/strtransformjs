@@ -1,15 +1,27 @@
-import { strEmbryonicTransform, TSReplacerAllAsync, PromiseExecutionMode, TSPromiseMatch } from "./definitions.js";
+import { TSReplacerAllAsync, PromiseExecutionMode, TSPromiseMatch } from "./definitions.js";
 
 export abstract class strCommons {
+  /**
+   *
+   * Encloses a regex in multiple formats, such as ${} {{}} or [[]]
+   * sample: input /[\w]+/i return /(\$\{[\w]+\}|\{\{[\w]+\}\})/ with dollar and curly
+   *
+   * @param input regx to enclausure in multipl
+   * @param dollar
+   * @param curly
+   * @param curly3
+   * @param square
+   * @returns Regex
+   */
   public static makeRegexIn = (input: RegExp, dollar: boolean, curly: boolean, curly3: boolean, square: boolean): RegExp => {
-    let x: string = input.source.replace(/^\//, '').replace(/\/\w*$/, '');
+    const x: string = input.source.replace(/^\//, '').replace(/\/\w*$/, '');
 
-    let r: string = dollar ? `\${\\s*${x}\\s*}` : "";
-    r += (r.length ? "|" : "") + (square ? `\[\[\\s*${x}\\s*\]\]` : "");
-    r += (r.length ? "|" : "") + (curly ? `\{\{\\s*${x}\\s*\}\}` : "");
-    r += (r.length ? "|" : "") + (curly3 ? `\{\{\{\\s*${x}\\s*\}\}\}` : "");
+    let r: string = dollar ? `\\\$\\\{\\s*${x}\\s*\\\}` : "";
+    r += square ? (r.length ? "|" : "") + `\\\[\\\[\\s*${x}\\s*\\\]\\\]` : "";
+    r += curly ? (r.length ? "|" : "") + `\\\{\\\{\\s*${x}\\s*\\\}\\\}` : "";
+    r += curly3 ? (r.length ? "|" : "") + `\\\{\\\{\{\\s*${x}\\s*\\\}\\\}\\\}` : "";
 
-    return new RegExp(`\(${x}\)`);
+    return new RegExp(`(${r})`, input.flags);
   }
 
   public static replaceAsync = async (

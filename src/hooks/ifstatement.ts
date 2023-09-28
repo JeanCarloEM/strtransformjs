@@ -1,5 +1,5 @@
-import { ISHookTO } from "../definitions"
-import { enclauruseHook } from "../enclauruseHook"
+import { ISHookTO } from "../definitions.js"
+import { enclauruseHook } from "../enclauruseHook.js"
 
 export class ifstatementHook extends enclauruseHook implements ISHookTO {
   public regex: RegExp = /(?<if>[^\:\?\{\}\(\)\$]*)\?(?<true>((?:[^\:\?\{\}\(\)\$]|\\.)*))\:(?<false>((?:[^\:\?\{\}\(\)\$]|\\.)*))/gi;

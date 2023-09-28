@@ -1,5 +1,5 @@
-import { TSReplacerAllAsync, ISHookTO } from "./definitions"
-import { strCommons } from "./strCommons"
+import { TSReplacerAllAsync, ISHookTO } from "./definitions.js"
+import { strCommons } from "./strCommons.js"
 
 
 /**
@@ -21,11 +21,17 @@ export abstract class enclauruseHook implements ISHookTO {
    */
   private hr: null | RegExp = null;
 
+  /**
+   * Encloses a regex in multiple formats, such as ${} {{}} or [[]]
+   * sample: input /[\w]+/i return /(\$\{[\w]+\}|\{\{[\w]+\}\})/ with dollar and curly
+   *
+   * @returns Regexp
+   */
   public hook = (): RegExp => {
     if (!this.hr) {
       this.hr = (strCommons.makeRegexIn(
         this.regex,
-        true, false, false, false))
+        this._indollar, this._incurly, this._incurly3, this._insquare))
     };
 
     return this.hr as RegExp;

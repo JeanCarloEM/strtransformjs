@@ -1,4 +1,4 @@
-import { enclauruseHook } from "../enclauruseHook";
+import { enclauruseHook } from "../enclauruseHook.js";
 export class ifstatementHook extends enclauruseHook {
     constructor() {
         super(...arguments);

@@ -1,4 +1,4 @@
-import { TSReplacerAllAsync, ISHookTO } from "./definitions";
+import { TSReplacerAllAsync, ISHookTO } from "./definitions.js";
 export declare abstract class enclauruseHook implements ISHookTO {
     abstract run: TSReplacerAllAsync;
     abstract regex: RegExp;
